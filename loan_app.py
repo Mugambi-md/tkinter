@@ -1,3 +1,5 @@
+from datetime import datetime, date
+
 def loan_arrears(principal, period, rate, s_period, p_bal, i_bal):
    
 
@@ -32,16 +34,15 @@ def loan_arrears(principal, period, rate, s_period, p_bal, i_bal):
          
     paid_interest = paid_interest(principal, rate, s_period, i_bal)
     interest_arrears = total_averange_interest-paid_interest
+
+    return f"Principal arrears: {principal_arrears:.2f}. Interest arrears: {interest_arrears:.2f}"
+
+def months_difference(selected_year, selected_month, selected_day):
     
-
-    return f"Principal has arrears of: {principal_arrears:.2f}. Interest has arrears of: {interest_arrears:.2f}"
-
-principal = int(input("Enter Initial Principal: "))
-period = int(input("Enter Repayment Period: "))
-rate = float(input("Enter Monthly Interest Rate: "))
-s_period = int(input("Enter Months Elapsed From Issue Date: "))
-p_bal =float(input("Enter Total Principal Balance: "))
-i_bal = float(input("Enter Total Interest Balance: "))
-update = loan_arrears(principal, period, rate, s_period, p_bal, i_bal)
-
-print(update)
+    selected_date = date(selected_year, selected_month, selected_day)
+    today = date.today()
+    month_difference = (today.year - selected_date.year)*12 + today.month - selected_date.month
+    if today.day<selected_date.day:
+        month_difference-=1
+     
+    return month_difference
