@@ -14,15 +14,67 @@ def next_calculation(): # Clear all inputs and reset dropdowns
     rate_entry.delete(0, tk.END)
     p_bal_entry.delete(0, tk.END)
     i_bal_entry.delete(0, tk.END)
-    year_combo.set("Year")
-    month_combo.set("Month")
-    day_combo.set("Day")
+    year_combo.set(today.year)
+    month_combo.set(today.month)
+    day_combo.set(today.day)
     result_label.config(text="")
     # Hide the buttons again
     exit_button.pack_forget()
     next_button.pack_forget()
 
+def validate_inputs():
+    # Check if all required fields are filled
+    if not principal_entry.get() or not period_entry.get() or not rate_entry.get() or not p_bal_entry.get() or not i_bal_entry.get():
+        result_label.config(text="Please fill all the fields.")
+        return False
+    # Validate that the inputs are numeric and positive where applicable
+    try:
+        principal = float(principal_entry.get())
+        if principal <= 1000:
+            result_label.config(text="Principal must be above 1000.")
+            return False
+    except ValueError:
+        result_label.config(text="Invalid Principal. Please enter a valid number.")
+        return False
+    try:
+        period = int(period_entry.get())
+        if period <= 0:
+            result_label.config(text="Period must be a positive number.")
+            return False
+    except ValueError:
+        result_label.config(text="Invalid Period. Please enter a valid Number.")
+        return False
+    try:
+        rate = float(rate_entry.get())
+        if rate <= 0:
+            result_label.config(text="Rate must be a positive percentage number.")
+            return False
+    except ValueError:
+        result_label.config(text="Invalid Rate. Please enter a valid number.")
+        return False
+    try:
+        p_bal = float(p_bal_entry.get())
+        if p_bal < 0:
+            result_label.config(text="Principal Balance cannot be negative.")
+            return False
+    except ValueError:
+        result_label.config(text="Invalid Principal Balance. Please Enter a Valid Number.")
+        return False
+    try:
+        i_bal = float(i_bal_entry.get())
+        if i_bal < 0:
+            result_label.config(text="Interest Balance cannot be Negative.")
+            return False
+    except ValueError:
+        result_label.config(text="Invalid Interest Balance. Please enter a valid number.")
+        return False
+    
+    return True
+
 def calculate_arrears():
+    if not validate_inputs(): # First validate the inputs
+        return
+    
     try:
         principal = float(principal_entry.get())
         period = int(period_entry.get())
@@ -70,32 +122,33 @@ rate_entry = tk.Entry(input_frame)
 rate_entry.bind("<Return>", focus_next_widget)
 rate_entry.grid(row=2, column=1, padx=5, pady=5)
 #Principal Balance
-tk.Label(input_frame, text="Enter Principal Balance:").grid(row=3, column=0, padx=5, pady=5, sticky="w")
+tk.Label(input_frame, text="Principal Balance:").grid(row=3, column=0, padx=5, pady=5, sticky="w")
 p_bal_entry = tk.Entry(input_frame)
 p_bal_entry.bind("<Return>", focus_next_widget)
 p_bal_entry.grid(row=3, column=1, padx=5, pady=5)
 #Interest Balance
-tk.Label(input_frame, text="Enter Interest Balance:").grid(row=4, column=0, padx=5, pady=5, sticky="w")
+tk.Label(input_frame, text="Interest Balance:").grid(row=4, column=0, padx=5, pady=5, sticky="w")
 i_bal_entry = tk.Entry(input_frame)
 i_bal_entry.bind("<Return>", focus_next_widget)
 i_bal_entry.grid(row=4, column=1, padx=5, pady=5)
 #Date Selection
-tk.Label(input_frame, text="Select Issues Date:").grid(row=5, column=0, padx=5, pady=5, sticky="w")
+tk.Label(input_frame, text="Issue Date (YYYYMMDD):").grid(row=5, column=0, padx=5, pady=5, sticky="w")
 date_frame = tk.Frame(input_frame)
 date_frame.grid(row=5, column=1, padx=5, pady=5)
+today = date.today()
 # Year Dropdown
-year_combo = ttk.Combobox(date_frame, values=[str(year) for year in range(date.today().year, date.today().year-15, -1)], width=5)
-year_combo.set("Year")
+year_combo = ttk.Combobox(date_frame, values=[str(year) for year in range(today.year, today.year-17, -1)], width=5)
+year_combo.set(str(today.year))
 year_combo.bind("<Return>", focus_next_widget)
 year_combo.pack(side="left", padx=2)
 #Month Dropdown
 month_combo = ttk.Combobox(date_frame, values=[str(month) for month in range(1, 13)], width=3)
-month_combo.set("Month")
+month_combo.set(str(today.month))
 month_combo.bind("<Return>", focus_next_widget)
 month_combo.pack(side="left", padx=2)
 #Day dropdown
 day_combo = ttk.Combobox(date_frame, values=[str(day) for day in range(1, 32)], width=3)
-day_combo.set("Day")
+day_combo.set(str(today.day))
 day_combo.bind("<Return>", focus_next_widget)
 day_combo.pack(side="left", padx=2)
 #Calculate button and result label
